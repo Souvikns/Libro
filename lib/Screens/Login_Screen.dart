@@ -6,6 +6,7 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:book_donation/Screens/home_screen.dart';
 import 'package:book_donation/Services/google_sign_in.dart';
+import 'package:book_donation/Services/facebook_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   // ignore: file_names
@@ -59,31 +60,25 @@ class _LoginPageState extends State<LoginPage> {
               ),
               child: Column(
                 children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.012,
-                  ),
                   Row(
                     children: [
                       SafeArea(
                         child: GestureDetector(
                           child: Container(
-                            height: 35,
+                            height: 0,
                             width: 40,
                             decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: AssetImage(
-                                        "assets/images/arrowImage1.png"),
-                                    fit: BoxFit.cover)),
+                            ),
                           ),
                           onTap: (){
-                            Navigator.pop(context);
+                            
                           },
                         ),
                       ),
                     ],
                   ),
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.25,
+                    height: MediaQuery.of(context).size.height * 0.21,
                     decoration: BoxDecoration(
                         image: DecorationImage(
                       image: AssetImage("assets/images/authBG 1.png"),
@@ -253,6 +248,10 @@ class _LoginPageState extends State<LoginPage> {
                       print("User Id is: ${signedInUser.user.uid}");
                       notify(context, "Congrats! Log-in Complete",
                           "Enjoy this app");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
                     } else {
                       FirebaseAuth.instance.signOut();
                       notify(context, "Log-in Problem",
@@ -311,14 +310,30 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.08,
-                width: MediaQuery.of(context).size.width * 0.15,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                      image: AssetImage("assets/images/fb.png"),
-                      fit: BoxFit.cover),
+              InkWell(
+                onTap: (){
+                  handleFacebookSignin().then((signInDone) {
+                    if(signInDone)
+                      {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return HomeScreen(isFacebookSignIn: true);
+                            },
+                          ),
+                        );
+                      };
+                  });
+                },
+                child:Container(
+                  height: MediaQuery.of(context).size.height * 0.08,
+                  width: MediaQuery.of(context).size.width * 0.15,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        image: AssetImage("assets/images/fb.png"),
+                        fit: BoxFit.cover),
+                  ),
                 ),
               ),
               Container(
@@ -527,7 +542,22 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               ),
-              Container(
+              InkWell(
+                  onTap: (){
+                    handleFacebookSignin().then((signInDone) {
+                      if(signInDone)
+                      {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return HomeScreen(isFacebookSignIn: true);
+                            },
+                          ),
+                        );
+                      };
+                    });
+                  },
+                child:Container(
                 height: MediaQuery.of(context).size.height * 0.08,
                 width: MediaQuery.of(context).size.width * 0.15,
                 decoration: BoxDecoration(
@@ -536,6 +566,7 @@ class _LoginPageState extends State<LoginPage> {
                       image: AssetImage("assets/images/fb.png"),
                       fit: BoxFit.cover),
                 ),
+              )
               ),
               Container(
                 height: MediaQuery.of(context).size.height * 0.08,
